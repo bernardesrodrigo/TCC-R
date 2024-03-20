@@ -9,16 +9,23 @@ Secret <- "f42e2f0e883350960158d64d84b01ce985b261f9d71179d033966e15e6faac3eec615
 
 token <- "EkVeRv8A9RiCnNsshVmnwNPquSza-5zRZWW0ViZIyKHgtaaeHCWkuZxAhlG9H8U6-kXb7O29DNGYCqyqvr35F234PQ3VN5YXNQMoeKxHBRn0QlJFJbRVEXkimimennp3McJGjaunBnLjT2Pmjmgz_KTFU6kGSoduwNVdMziERD8"
 
+API1 <- "http://192.168.0.66:3000/api/v1/transaction/schedule/executed"
+API2 <- "http://192.168.0.66:3000/api/v2/loading/transaction/schedule"
 
 # FLX request
 #token <- 
 
-resp2 <- request("http://192.168.0.66:3000/api/v1/transaction/schedule/executed") |>
+resp2 <- request(API2) |>
   req_headers('Authorization' = 'EkVeRv8A9RiCnNsshVmnwNPquSza-5zRZWW0ViZIyKHgtaaeHCWkuZxAhlG9H8U6-kXb7O29DNGYCqyqvr35F234PQ3VN5YXNQMoeKxHBRn0QlJFJbRVEXkimimennp3McJGjaunBnLjT2Pmjmgz_KTFU6kGSoduwNVdMziERD8' ) |>
-  req_url_query('page' = 1, 'perPage' = 10, 'filter' = '{"executedAt":"2023-12-01"}') |>
+  req_url_query('page' = 1, 'perPage' = 6, 'filter' = '{"executedAt":"2023-12-02"}') |>
   req_perform()
 resp2 |> resp_body_json() |> tibble::as_tibble()
 teste <- tibble::as.tibble(resp_body_json(resp2))
+
+# Converter de json para dataframe
+teste2 <- as.data.frame(teste)
+
+df <- as.data.frame(resp2)
 resp2
 
 resp2 |> 
@@ -31,11 +38,26 @@ sw_data <- function(resp) {
 # Acessando uma variável no tibble
 teste$rows[[2]]$compartments[[4]]$recipe$name
 
+########################### teste converter json para dataframe ##########################
 
 
+reposLoL <- fromJSON("https://api.github.com/users/hadley/repos", simplifyDataFrame = FALSE)
 
+library(data.tree)
+repos <- as.Node(reposLoL)
+print(repos, "id", "login")
 
+#convert this to a data.frame
+reposdf <- repos |> ToDataFrameTable(ownerId = "id", 
+                                  "login", 
+                                  repoName = function(x) x$parent$name, #relative to the leaf
+                                  fullName = "full_name", #unambiguous values are inherited from ancestors
+                                  repoId = function(x) x$parent$id,
+                                  "fork", 
+                                  "type")
 
+reposdf
+reposdf$repoName
 
 
 
