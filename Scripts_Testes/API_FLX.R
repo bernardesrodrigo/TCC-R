@@ -12,18 +12,16 @@ token <- "EkVeRv8A9RiCnNsshVmnwNPquSza-5zRZWW0ViZIyKHgtaaeHCWkuZxAhlG9H8U6-kXb7O
 API1 <- "http://192.168.0.66:3000/api/v1/transaction/schedule/executed"
 API2 <- "http://192.168.0.66:3000/api/v2/loading/transaction/schedule"
 
-# FLX request
-#token <- 
-
 resp2 <- request(API2) |>
-  req_headers('Authorization' = 'EkVeRv8A9RiCnNsshVmnwNPquSza-5zRZWW0ViZIyKHgtaaeHCWkuZxAhlG9H8U6-kXb7O29DNGYCqyqvr35F234PQ3VN5YXNQMoeKxHBRn0QlJFJbRVEXkimimennp3McJGjaunBnLjT2Pmjmgz_KTFU6kGSoduwNVdMziERD8' ) |>
-  req_url_query('page' = 1, 'perPage' = 6, 'filter' = '{"executedAt":"2023-12-02"}') |>
+  req_headers('Authorization' = 'uJRibx5E6dUJis2aAYoXCtOLPeT-b7wBGe7jvuTM2yIljGmdg6nvVn8AUF4FLaTtqfUb26cr2IRvbceJporYwLY4TmkV4jkkNuwqpHVT2Pnoz39EbWMYD2S8iXIP0esj_CbkFLO5KoeQIwPwmHAUj2rWKfcLGQ57q6IUuGY_t9E' ) |>
+  req_url_query('page' = 1, 'perPage' = 100, 'filter' = '{"insertedAt":"2023-12-06"}') |>
   req_perform()
 resp2 |> resp_body_json() |> tibble::as_tibble()
-teste <- tibble::as.tibble(resp_body_json(resp2))
+respJson <- resp_body_json(resp2)
+
 
 # Converter de json para dataframe
-teste2 <- as.data.frame(teste)
+teste2 <- as.data.frame(testa$result)
 
 df <- as.data.frame(resp2)
 resp2
@@ -37,15 +35,41 @@ sw_data <- function(resp) {
 }
 # Acessando uma variável no tibble
 teste$rows[[2]]$compartments[[4]]$recipe$name
+########################### transformar lista para dataframe ##########################
+tree <- as.Node(respJson$result)
+print(tree)
+dd <- ToDataFrameTypeCol(tree, type = 'Compartments', prefix = NULL)
+tree$Get('name')
+
+length(respJson$result[[1]]$compartments[[1]])
+respJson$result[[2]]$compartments$executed[[1]]$quantity$programmed
+respJson$result[[2]]$compartments$executed[[2]]$quantity$programmed
+respJson$result[[2]]$compartments$executed[[3]]$quantity$programmed
+respJson$result[[2]]$compartments$executed[[4]]$quantity$programmed
+
+
+treedf <- tree|> ToDataFrameTable()
+
+
+
+help("ToDataFrameTable")
+
+
+
+
+
 
 ########################### teste converter json para dataframe ##########################
-
-
+install.packages("DiagrammeR")
+library(DiagrammeR)
+library(data.tree)
 reposLoL <- fromJSON("https://api.github.com/users/hadley/repos", simplifyDataFrame = FALSE)
 
-library(data.tree)
+testeasNode <- resp2 |> resp_body_json() |> as.Node()
+
 repos <- as.Node(reposLoL)
 print(repos, "id", "login")
+print(tree, "vehicle")
 
 #convert this to a data.frame
 reposdf <- repos |> ToDataFrameTable(ownerId = "id", 
@@ -59,12 +83,20 @@ reposdf <- repos |> ToDataFrameTable(ownerId = "id",
 reposdf
 reposdf$repoName
 
+testedf <- testeasNode |> ToDataFrameTable(Transaction = "id",
+                                     repoName = function(x) x$parent$name, #relative to the leaf
+                                     fullName = "full_name", #unambiguous values are inherited from ancestors
+                                     repoId = function(x) x$parent$id,
+                                     "fork", 
+                                     "type")
+testedf
+testedf$repoName
 
 
 
 
 
-
+testeasNode
 
 
 
