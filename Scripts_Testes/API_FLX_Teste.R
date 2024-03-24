@@ -14,7 +14,7 @@ API2 <- "http://192.168.0.66:3000/api/v2/loading/transaction/schedule"
 
 resp2 <- request(API2) |>
   req_headers('Authorization' = 'uJRibx5E6dUJis2aAYoXCtOLPeT-b7wBGe7jvuTM2yIljGmdg6nvVn8AUF4FLaTtqfUb26cr2IRvbceJporYwLY4TmkV4jkkNuwqpHVT2Pnoz39EbWMYD2S8iXIP0esj_CbkFLO5KoeQIwPwmHAUj2rWKfcLGQ57q6IUuGY_t9E' ) |>
-  req_url_query('page' = 1, 'perPage' = 100, 'filter' = '{"insertedAt":"2023-12-06"}') |>
+  req_url_query('page' = 1, 'perPage' = 100, 'filter' = '{"insertedAt":"2023-11-01"}') |>
   req_perform()
 resp2 |> resp_body_json() |> tibble::as_tibble()
 respJson <- resp_body_json(resp2)
@@ -35,13 +35,39 @@ sw_data <- function(resp) {
 }
 # Acessando uma variável no tibble
 teste$rows[[2]]$compartments[[4]]$recipe$name
+
+
 ########################### transformar lista para dataframe ##########################
+
+
 tree <- as.Node(respJson$result)
 print(tree)
 dd <- ToDataFrameTypeCol(tree, type = 'Compartments', prefix = NULL)
 tree$Get('name')
 
-length(respJson$result[[1]]$compartments[[1]])
+# Quantidade de transações recebidas
+transactions <- length(respJson$result)
+
+# Quantidade de bateladas na transação
+transac_I_cmpts <- length(respJson$result[[1]]$compartments[[1]])
+
+
+te_id <- respJson$result[[1]]$transactions
+te_started_at <- respJson$result[[1]]$startedAt
+te_stopped_at <- respJson$result[[1]]$stoppedAt
+ts_vehicle_id <- respJson$result[[1]]$vehicle$id
+ts_auth_code <- respJson$result[[1]]$auth$code
+be_started_at <- respJson$result[[1]]$compartments$executed[[1]]$startedAt
+be_stopped_at <- respJson$result[[1]]$compartments$executed[[1]]$stoppedAt
+
+
+
+
+
+
+
+
+
 respJson$result[[2]]$compartments$executed[[1]]$quantity$programmed
 respJson$result[[2]]$compartments$executed[[2]]$quantity$programmed
 respJson$result[[2]]$compartments$executed[[3]]$quantity$programmed
