@@ -1,5 +1,3 @@
-install.packages("wordcloud")
-
 library("tidyverse")
 library("stringr")
 library("readxl")
@@ -28,11 +26,6 @@ ds$be_recipe_name <- sub(" BRC 1", "", ds$be_recipe_name)
 ds$be_recipe_name <- sub(" BRC 2", "", ds$be_recipe_name)
 
 ds$be_recipe_name <- str_trim(ds$be_recipe_name, side = "right")
-
-
-
-
-
 
 #Converte as variáveis datas string em date time
 ds$te_started_at <- as.POSIXct(ds$te_started_at, format="%Y-%m-%d %H:%M:%S", tz="UTC")

@@ -1,4 +1,3 @@
-
 ############################# TOTAL CARREGADO POR DATA ######################################################
 # Crie o gráfico de barras
 dados_agrupados <- aggregate(pe_sum_gov ~ data_formatada, data = transform(ds, data_formatada = as.Date(be_started_at)), sum)

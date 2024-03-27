@@ -1,24 +1,20 @@
 library(httr2)
 library(jsonlite)
 
-#url <- "http://192.168.0.66:3000/api/v1/application/authenticate"
-#url_Exec <- "http://192.168.0.66:3000/api/v1/transaction/schedule/executed?page=1&perPage=10&filter={'executedAt':'2023-12-01'}&scale=2"
-
-key <- "3caf7711-4c60-4219-9b1c-0caacae509c5"
-Secret <- "f42e2f0e883350960158d64d84b01ce985b261f9d71179d033966e15e6faac3eec6159587dd3806c06d700b74e2215cffb3af7772fe7a92b736c0a710479abc8"
-
-token <- "EkVeRv8A9RiCnNsshVmnwNPquSza-5zRZWW0ViZIyKHgtaaeHCWkuZxAhlG9H8U6-kXb7O29DNGYCqyqvr35F234PQ3VN5YXNQMoeKxHBRn0QlJFJbRVEXkimimennp3McJGjaunBnLjT2Pmjmgz_KTFU6kGSoduwNVdMziERD8"
+##################################### URL's API's Versões 1 e 2 #####################################
 
 API1 <- "http://192.168.0.66:3000/api/v1/transaction/schedule/executed"
 API2 <- "http://192.168.0.66:3000/api/v2/loading/transaction/schedule"
 
+##################################### Requisição Json #####################################
 resp2 <- request(API2) |>
   req_headers('Authorization' = 'uJRibx5E6dUJis2aAYoXCtOLPeT-b7wBGe7jvuTM2yIljGmdg6nvVn8AUF4FLaTtqfUb26cr2IRvbceJporYwLY4TmkV4jkkNuwqpHVT2Pnoz39EbWMYD2S8iXIP0esj_CbkFLO5KoeQIwPwmHAUj2rWKfcLGQ57q6IUuGY_t9E' ) |>
-  req_url_query('page' = 1, 'perPage' = 400, 'filter' = '{"insertedAt":"2023-11-06"}') |>
+  req_url_query('page' = 1, 'perPage' = 400, 'filter' = '{"insertedAt":"2023-11-08"}') |>
   req_perform()
 
 respJson <- resp_body_json(resp2)
 
+# Cria o dataframe com as variáveis a serem recebidas
 ds <- data.frame(
   te_id = 0,
   te_started_at = 0,
@@ -37,9 +33,10 @@ ds <- data.frame(
   pe_avg_average_inpm = 0,
   pe_avg_average_gl = 0)
 
-# Quantidade de transações recebidas
+# Identifica Quantidade de transações (caminhões carregados) recebidas
 transactions <- length(respJson$result)
 
+# Varre o arquivo Json alocando os dados de "Transações" e "Bateladas" no dataframe
 for (i in 1:transactions) {
   if (respJson$result[[i]]$isApproved == TRUE) {
   # Variaveis de transação
@@ -90,7 +87,31 @@ for (i in 1:transactions) {
   }
   }
 }
+# Deleta linha inicial "zerada" do dateframe
 ds <- ds[-c(1),]
+
+
+##################################### API URL's #####################################
+#url <- "http://192.168.0.66:3000/api/v1/application/authenticate"
+#url_Exec <- "http://192.168.0.66:3000/api/v1/transaction/schedule/executed?page=1&perPage=10&filter={'executedAt':'2023-12-01'}&scale=2"
+
+##################################### API Key / Secret / Token #####################################
+
+key <- "3caf7711-4c60-4219-9b1c-0caacae509c5"
+Secret <- "f42e2f0e883350960158d64d84b01ce985b261f9d71179d033966e15e6faac3eec6159587dd3806c06d700b74e2215cffb3af7772fe7a92b736c0a710479abc8"
+token <- "EkVeRv8A9RiCnNsshVmnwNPquSza-5zRZWW0ViZIyKHgtaaeHCWkuZxAhlG9H8U6-kXb7O29DNGYCqyqvr35F234PQ3VN5YXNQMoeKxHBRn0QlJFJbRVEXkimimennp3McJGjaunBnLjT2Pmjmgz_KTFU6kGSoduwNVdMziERD8"
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #############################################################################
