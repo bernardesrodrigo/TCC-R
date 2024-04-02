@@ -6,18 +6,18 @@ library(wordcloud)
 library(RColorBrewer)  # Para obter paletas de cores
 library(dplyr)
 
-library(cluster) #algoritmo de cluster
-library(dendextend) #compara dendogramas
-library(factoextra) #algoritmo de cluster e visualizacao
-library(fpc) #algoritmo de cluster e visualizacao
-library(gridExtra) #para a funcao grid arrange
-
-
-
-ds <- read_excel("sample2.xlsx")
-view(ds)
-dim(ds)
-str(ds)
+ds$be_preset_quantity <- as.numeric(ds$be_preset_quantity)
+ds$pe_sum_gov <- as.numeric(ds$pe_sum_gov)
+ds$pe_sum_gsv <- as.numeric(ds$pe_sum_gsv)
+ds$pe_sum_mass <- as.numeric(ds$pe_sum_mass)
+ds$pe_avg_average_density <- as.numeric(ds$pe_avg_average_density)
+ds$pe_avg_average_temperature <- as.numeric(ds$pe_avg_average_temperature)
+ds$pe_avg_average_inpm <- as.numeric(ds$pe_avg_average_inpm)
+ds$pe_avg_average_inpm20C <- as.numeric(ds$pe_avg_average_inpm20C)
+ds$pe_avg_average_gl <- as.numeric(ds$pe_avg_average_gl)
+ds$be_number <- as.numeric(ds$be_number)
+ds$be_arm_number <- as.numeric(ds$be_arm_number)
+ds$be_compartment_number <- as.numeric(ds$be_compartment_number)
 
 #Normaliza nomes das receitas de cada braço
 ds$be_recipe_name <- sub("_BRC_1", "", ds$be_recipe_name)
@@ -38,22 +38,29 @@ ds$te_durat <- ds$te_stopped_at - ds$te_started_at
 ds$be_durat <- ds$be_stopped_at - ds$be_started_at
 
 #Calcula média de litros carregados por minuto
-ds$te_avgLmin <- ds$pe_sum_gov / as.numeric(ds$te_durat)
-ds$be_avgLmin <- ds$pe_sum_gov / as.numeric(ds$be_durat)
+ds$te_avgLmin <- as.numeric(ds$pe_sum_gov) / as.numeric(ds$te_durat)
+ds$be_avgLmin <- as.numeric(ds$pe_sum_gov) / as.numeric(ds$be_durat)
 
 #Calcula o valor excedente/faltante em função do valor presetado
-ds$be_overrun <- ds$be_preset_quantity - ds$pe_sum_gov
+ds$be_overrun <- as.numeric(ds$be_preset_quantity) - as.numeric(ds$pe_sum_gov)
 
 #Subistitui o número da placa por um número fictício
-#ds$placaf <- str_replace_all(ds$ts_vehicle_id, "[0-9]", function(x) as.character(sample(0:9, 1)))
+ds$placaf <- str_replace_all(ds$ts_vehicle_id, "[0-9]", function(x) as.character(sample(0:9, 1)))
 
 summary(ds)
 summary(ds$be_avgLmin)
 #top10 <- table(ds$ts_vehicle_id)
-sum(ds$pe_sum_gov)                            
+sum(as.numeric(ds$pe_sum_gov))
 
 
 ######################################## CLUSTERS ###############################################
+library(cluster) #algoritmo de cluster
+library(dendextend) #compara dendogramas
+library(factoextra) #algoritmo de cluster e visualizacao
+library(fpc) #algoritmo de cluster e visualizacao
+library(gridExtra) #para a funcao grid arrange
+
+
 variaveis <- c('ts_vehicle_id', 'be_recipe_name') #'be_compartment_number', 'be_arm_number', 'be_avgLmin', , ,  'be_overrun'
 
 # Seleciona variaveis no DS original
